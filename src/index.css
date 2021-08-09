@@ -16,3 +16,27 @@ canvas {
   max-height: 960px;
   max-width: 1920px;
 }
+.bottom-controller {
+  width: 100%;
+}
+.option-group {
+  color: white;
+  width: 100%;
+  height: 40px;
+}
+#patterns {
+  width: 200px;
+}
+#textContentOutput {
+  border-top: black 1px solid;
+  width: 100%;
+  height: 145px;
+  min-height: 100px;
+  background-color: white;
+  overflow: auto;
+}
+.start-button {
+  width: 130px;
+  background: white;
+  cursor: pointer;
+}

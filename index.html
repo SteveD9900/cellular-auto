@@ -4,16 +4,78 @@
   </head>
   <body>
     <canvas></canvas>
+    <div class="bottom-controller">
+      <div class="option-group">
+        <span>Select a pattern: </span>
+        <select name="patterns" id="patterns">
+          <option value="">--Select--</option>
+        </select>
+      </div>
+      <div id="textContentOutput"></div>
+      <button id="startBtn" class="start-button">Start</button>
+    </div>
   </body>
   <script type="module">
+    import { next, parse } from "./src/engine.js";
+
     const scale = 4;
     const worldWidth = 480;
     const worldHeight = 240;
+    var lexiconArray = [];
+    var updatedArr = [];
 
     const canvas = document.querySelector("canvas");
     canvas.width = worldWidth * scale;
     canvas.height = worldHeight * scale;
     const ctx = canvas.getContext("2d");
+
+    window.scrollTo(0, document.body.scrollHeight);
+
+    var xmlhttp = new XMLHttpRequest();
+    var url = "./src/lexicon.json";
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        this.lexiconArray = JSON.parse(this.responseText);
+        ReadLexicon(this.lexiconArray);
+      }
+    };
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+
+    function ReadLexicon(arr) {
+      var selectOptions = document.getElementById("patterns"); 
+      for(var i = 0; i < arr.length; i++) {
+          var el = document.createElement("option");
+          el.textContent = arr[i].name;
+          el.value = arr[i].description;
+          el.pattern = arr[i].pattern;
+          selectOptions.appendChild(el);
+      }
+    }
+
+    var select = document.querySelector('#patterns');
+    select.addEventListener("change",function(){
+      displayDescription(select);
+    });
+
+    function displayDescription(select) {
+      var value = select.options[select.selectedIndex].value;
+      var div = document.getElementById("textContentOutput");
+
+      div.innerHTML = "Description: " + value;
+    }
+
+    document.getElementById("startBtn").addEventListener("click", function() {
+      if (select.options[select.selectedIndex].pattern != undefined) {
+        this.updatedArr = parse(select.options[select.selectedIndex].pattern);
+        render(this.updatedArr);
+        var that = this;
+        var interval = setInterval(function() {
+          that.updatedArr = next(that.updatedArr);
+          render(that.updatedArr);
+       }, 100);
+      }
+    });
 
     const render = (world) => {
       ctx.fillStyle = "#202020";
@@ -22,7 +84,7 @@
       world.forEach((row, y) =>
         row.forEach(
           (alive, x) =>
-            alive && ctx.fillRect(x * scale, y * scale, scale - 1, scale - 1)
+            alive && ctx.fillRect((x + 0.5 * worldWidth) * scale, (y + 0.5 * worldHeight) * scale, scale - 1, scale - 1)
         )
       );
     };
