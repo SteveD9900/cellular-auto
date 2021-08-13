@@ -23,9 +23,11 @@ export const next = (world) => {
           }
         }
 
-        if (number == 2 || number == 3) {
+        if ((number == 3 || number == 2) && world[y][x]== true) {
           row[x] = true;
-        } 
+        } else if (number == 3 && !row[x]) {
+          row[x] = true;
+        }
     })
   );
   return nestedArray;
